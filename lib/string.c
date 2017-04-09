@@ -19,6 +19,8 @@
  * -  Kissed strtok() goodbye
  */
 
+#define __NO_FORTIFY
+
 #include <linux/types.h>
 #include <linux/string.h>
 #include <linux/ctype.h>
@@ -952,3 +954,9 @@ char *strreplace(char *s, char old, char new)
 	return s;
 }
 EXPORT_SYMBOL(strreplace);
+
+void fortify_panic(const char *name)
+{
+	panic("detected buffer overflow in %s", name);
+}
+EXPORT_SYMBOL(fortify_panic);
