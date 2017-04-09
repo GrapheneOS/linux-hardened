@@ -169,6 +169,12 @@ config HARDENED_USERCOPY_PAGESPAN
 	  been removed. This config is intended to be used only while
 	  trying to find such users.
 
+config FORTIFY_SOURCE
+	bool "Harden common functions against buffer overflows"
+	help
+	  Detect overflows of buffers in common functions where the compiler
+	  can determine the buffer size.
+
 config PAGE_SANITIZE
 	bool "Sanitize pages"
 	default y
