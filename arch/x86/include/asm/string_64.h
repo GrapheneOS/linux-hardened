@@ -77,6 +77,11 @@ int strcmp(const char *cs, const char *ct);
 #define memcpy(dst, src, len) __memcpy(dst, src, len)
 #define memmove(dst, src, len) __memmove(dst, src, len)
 #define memset(s, c, n) __memset(s, c, n)
+
+#ifndef __NO_FORTIFY
+#define __NO_FORTIFY /* FORTIFY_SOURCE uses __builtin_memcpy, etc. */
+#endif
+
 #endif
 
 __must_check int memcpy_mcsafe_unrolled(void *dst, const void *src, size_t cnt);
