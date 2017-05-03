@@ -1177,7 +1177,7 @@ void lbs_mesh_ethtool_get_strings(struct net_device *dev,
 	switch (stringset) {
 	case ETH_SS_STATS:
 		for (i = 0; i < MESH_STATS_NUM; i++) {
-			memcpy(s + i * ETH_GSTRING_LEN,
+			__builtin_memcpy(s + i * ETH_GSTRING_LEN,
 					mesh_stat_strings[i],
 					ETH_GSTRING_LEN);
 		}
