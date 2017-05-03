@@ -75,6 +75,11 @@ static __always_inline void boot_init_stack_canary(void)
 	tsc = rdtsc();
 	canary += tsc + (tsc << 32UL);
 
+#ifdef CONFIG_X86_64
+	/* Sacrifice 8 bits of entropy to mitigate non-terminated C string overflows */
+	canary &= ~(unsigned long)0xff;
+#endif
+
 	current->stack_canary = canary;
 #ifdef CONFIG_X86_64
 	this_cpu_write(irq_stack_union.stack_canary, canary);
