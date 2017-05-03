@@ -1853,9 +1853,9 @@ config SLOB
 endchoice
 
 config SLAB_FREELIST_RANDOM
-	default n
 	depends on SLAB || SLUB
 	bool "SLAB freelist randomization"
+	default y
 	help
 	  Randomizes the freelist order used on creating new pages. This
 	  security feature reduces the predictability of the kernel slab
