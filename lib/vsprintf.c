@@ -1470,7 +1470,7 @@ char *flags_string(char *buf, char *end, void *flags_ptr, const char *fmt)
 	return format_flags(buf, end, flags, names);
 }
 
-int kptr_restrict __read_mostly;
+int kptr_restrict __read_mostly = 2;
 
 /*
  * Show a '%p' thing.  A kernel extension is that the '%p' is followed
