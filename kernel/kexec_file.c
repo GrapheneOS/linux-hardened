@@ -889,7 +889,7 @@ int kexec_load_purgatory(struct kimage *image, unsigned long min,
 
 	pi->ehdr = (Elf_Ehdr *)kexec_purgatory;
 
-	if (memcmp(pi->ehdr->e_ident, ELFMAG, SELFMAG) != 0
+	if (__builtin_memcmp(pi->ehdr->e_ident, ELFMAG, SELFMAG) != 0
 	    || pi->ehdr->e_type != ET_REL
 	    || !elf_check_arch(pi->ehdr)
 	    || pi->ehdr->e_shentsize != sizeof(Elf_Shdr))
