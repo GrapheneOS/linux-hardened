@@ -49,7 +49,11 @@ static DECLARE_WORK(slab_caches_to_rcu_destroy_work,
  * Merge control. If this is set then no merging of slab caches will occur.
  * (Could be removed. This was introduced to pacify the merge skeptics.)
  */
+#ifdef CONFIG_SLAB_HARDENED
+static int __ro_after_init slab_nomerge = 1;
+#else
 static int __ro_after_init slab_nomerge;
+#endif
 
 static int __init setup_slab_nomerge(char *str)
 {
