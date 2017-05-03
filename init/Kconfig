@@ -1868,6 +1868,16 @@ config SLAB_HARDENED
           Make minor performance sacrifices to harden the kernel slab
           allocator.
 
+config SLAB_SANITIZE
+	default y
+	depends on SLUB
+	bool "Sanitize SLAB allocations"
+	help
+	  Zero fill slab allocations on free, reducing the lifetime of
+	  sensitive data and helping to mitigate use-after-free bugs.
+
+	  For slabs with debug poisoning enabling, this has no impact.
+
 config SLUB_CPU_PARTIAL
 	default y
 	depends on SLUB && SMP
