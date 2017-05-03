@@ -1354,7 +1354,7 @@ char *uuid_string(char *buf, char *end, const u8 *addr,
 	return string(buf, end, uuid, spec);
 }
 
-int kptr_restrict __read_mostly;
+int kptr_restrict __read_mostly = 2;
 
 static noinline_for_stack
 char *restricted_pointer(char *buf, char *end, const void *ptr,
