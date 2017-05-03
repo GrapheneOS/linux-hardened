@@ -542,6 +542,11 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
 
 #ifdef CONFIG_CC_STACKPROTECTOR
 	tsk->stack_canary = get_random_long();
+
+#ifdef CONFIG_64BIT
+	/* Sacrifice 8 bits of entropy to mitigate non-terminated C string overflows */
+	memset(&tsk->stack_canary, 0, 1);
+#endif
 #endif
 
 	/*
