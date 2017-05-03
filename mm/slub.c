@@ -34,6 +34,7 @@
 #include <linux/stacktrace.h>
 #include <linux/prefetch.h>
 #include <linux/memcontrol.h>
+#include <linux/random.h>
 
 #include <trace/events/kmem.h>
 
@@ -240,28 +241,53 @@ static inline void stat(const struct kmem_cache *s, enum stat_item si)
 
 static inline void *get_freepointer(struct kmem_cache *s, void *object)
 {
+#ifdef CONFIG_SLAB_HARDENED
+	unsigned long freepointer_addr = (unsigned long)object + s->offset;
+	return (void *)(*(unsigned long *)freepointer_addr ^ s->random ^ freepointer_addr);
+#else
 	return *(void **)(object + s->offset);
+#endif
 }
 
 static void prefetch_freepointer(const struct kmem_cache *s, void *object)
 {
+#ifdef CONFIG_SLAB_HARDENED
+	unsigned long freepointer_addr = (unsigned long)object + s->offset;
+	if (object) {
+		void **freepointer_ptr = (void **)(*(unsigned long *)freepointer_addr ^ s->random ^ freepointer_addr);
+		prefetch(freepointer_ptr);
+	}
+#else
 	prefetch(object + s->offset);
+#endif
 }
 
 static inline void *get_freepointer_safe(struct kmem_cache *s, void *object)
 {
+	unsigned long __maybe_unused freepointer_addr;
 	void *p;
 
 	if (!debug_pagealloc_enabled())
 		return get_freepointer(s, object);
 
+#ifdef CONFIG_SLAB_HARDENED
+	freepointer_addr = (unsigned long)object + s->offset;
+	probe_kernel_read(&p, (void **)freepointer_addr, sizeof(p));
+	return (void *)((unsigned long)p ^ s->random ^ freepointer_addr);
+#else
 	probe_kernel_read(&p, (void **)(object + s->offset), sizeof(p));
 	return p;
+#endif
 }
 
 static inline void set_freepointer(struct kmem_cache *s, void *object, void *fp)
 {
+#ifdef CONFIG_SLAB_HARDENED
+	unsigned long freepointer_addr = (unsigned long)object + s->offset;
+	*(void **)freepointer_addr = (void *)((unsigned long)fp ^ s->random ^ freepointer_addr);
+#else
 	*(void **)(object + s->offset) = fp;
+#endif
 }
 
 /* Loop over all objects in a slab */
@@ -3535,6 +3561,9 @@ static int calculate_sizes(struct kmem_cache *s, int forced_order)
 static int kmem_cache_open(struct kmem_cache *s, unsigned long flags)
 {
 	s->flags = kmem_cache_flags(s->size, flags, s->name, s->ctor);
+#ifdef CONFIG_SLAB_HARDENED
+	s->random = get_random_long();
+#endif
 	s->reserved = 0;
 
 	if (need_reserve_slab_rcu && (s->flags & SLAB_TYPESAFE_BY_RCU))
