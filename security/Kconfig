@@ -33,6 +33,7 @@ config SECURITY_TIOCSTI_RESTRICT
 
 config SECURITY_PERF_EVENTS_RESTRICT
 	bool "Restrict unprivileged use of performance events"
+	default y
 	depends on PERF_EVENTS
 	help
 	  If you say Y here, the kernel.perf_event_paranoid sysctl
