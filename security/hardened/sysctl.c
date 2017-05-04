@@ -6,127 +6,127 @@
 
 struct ctl_table hardened_table[] = {
 #ifdef CONFIG_HARDENED_CHROOT
-#ifdef CONFIG_GRKERNSEC_CHROOT_SHMAT
+#ifdef CONFIG_HARDENED_CHROOT_SHMAT
 	{
 		.procname	= "chroot_deny_shmat",
-		.data		= &grsec_hardened_enable_chroot_shmat,
+		.data		= &hardened_enable_chroot_shmat,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_UNIX
+#ifdef CONFIG_HARDENED_CHROOT_UNIX
 	{
 		.procname	= "chroot_deny_unix",
-		.data		= &grsec_hardened_enable_chroot_unix,
+		.data		= &hardened_enable_chroot_unix,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_MOUNT
+#ifdef CONFIG_HARDENED_CHROOT_MOUNT
 	{
 		.procname	= "chroot_deny_mount",
-		.data		= &grsec_hardened_enable_chroot_mount,
+		.data		= &hardened_enable_chroot_mount,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_FCHDIR
+#ifdef CONFIG_HARDENED_CHROOT_FCHDIR
 	{
 		.procname	= "chroot_deny_fchdir",
-		.data		= &grsec_hardened_enable_chroot_fchdir,
+		.data		= &hardened_enable_chroot_fchdir,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_DOUBLE
+#ifdef CONFIG_HARDENED_CHROOT_DOUBLE
 	{
 		.procname	= "chroot_deny_chroot",
-		.data		= &grsec_hardened_enable_chroot_double,
+		.data		= &hardened_enable_chroot_double,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_PIVOT
+#ifdef CONFIG_HARDENED_CHROOT_PIVOT
 	{
 		.procname	= "chroot_deny_pivot",
-		.data		= &grsec_hardened_enable_chroot_pivot,
+		.data		= &hardened_enable_chroot_pivot,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_CHDIR
+#ifdef CONFIG_HARDENED_CHROOT_CHDIR
 	{
 		.procname	= "chroot_enforce_chdir",
-		.data		= &grsec_hardened_enable_chroot_chdir,
+		.data		= &hardened_enable_chroot_chdir,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_CHMOD
+#ifdef CONFIG_HARDENED_CHROOT_CHMOD
 	{
 		.procname	= "chroot_deny_chmod",
-		.data		= &grsec_hardened_enable_chroot_chmod,
+		.data		= &hardened_enable_chroot_chmod,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_MKNOD
+#ifdef CONFIG_HARDENED_CHROOT_MKNOD
 	{
 		.procname	= "chroot_deny_mknod",
-		.data		= &grsec_hardened_enable_chroot_mknod,
+		.data		= &hardened_enable_chroot_mknod,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_NICE
+#ifdef CONFIG_HARDENED_CHROOT_NICE
 	{
 		.procname	= "chroot_restrict_nice",
-		.data		= &grsec_hardened_enable_chroot_nice,
+		.data		= &hardened_enable_chroot_nice,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_CAPS
+#ifdef CONFIG_HARDENED_CHROOT_CAPS
 	{
 		.procname	= "chroot_caps",
-		.data		= &grsec_hardened_enable_chroot_caps,
+		.data		= &hardened_enable_chroot_caps,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_RENAME
+#ifdef CONFIG_HARDENED_CHROOT_RENAME
 	{
 		.procname	= "chroot_deny_bad_rename",
-		.data		= &grsec_hardened_enable_chroot_rename,
+		.data		= &hardened_enable_chroot_rename,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_SYSCTL
+#ifdef CONFIG_HARDENED_CHROOT_SYSCTL
 	{
 		.procname	= "chroot_deny_sysctl",
-		.data		= &grsec_hardened_enable_chroot_sysctl,
+		.data		= &hardened_enable_chroot_sysctl,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
 	},
 #endif
-#ifdef CONFIG_GRKERNSEC_CHROOT_FINDTASK
+#ifdef CONFIG_HARDENED_CHROOT_FINDTASK
 	{
 		.procname	= "chroot_findtask",
-		.data		= &grsec_hardened_enable_chroot_findtask,
+		.data		= &hardened_enable_chroot_findtask,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
 		.proc_handler	= &proc_dointvec_secure,
