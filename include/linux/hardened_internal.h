@@ -52,7 +52,7 @@ extern int hardened_enable_chroot_unix;
 
 #define have_same_root(tsk_a,tsk_b) ((tsk_a)->chroot_dentry == (tsk_b)->chroot_dentry)
 
-static inline bool gr_is_same_file(const struct file *file1, const struct file *file2)
+static inline bool is_same_file(const struct file *file1, const struct file *file2)
 {
 	if (file1 && file2) {
 		const struct inode *inode1 = file1->f_path.dentry->d_inode;
