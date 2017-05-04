@@ -38,7 +38,7 @@
 #include <linux/bitops.h>
 #include <linux/init_task.h>
 #include <linux/uaccess.h>
-
+#include <linux/hardened.h>
 #include "internal.h"
 #include "mount.h"
 
@@ -2277,6 +2277,10 @@ static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path
 	if (!err)
 		err = complete_walk(nd);
 
+	if (!err && !(nd->flags & LOOKUP_PARENT)) {
+                err = chroot_pathat(nd->dfd, nd->path.dentry, nd->path.mnt, nd->flags);
+        }
+
 	if (!err && nd->flags & LOOKUP_DIRECTORY)
 		if (!d_can_lookup(nd->path.dentry))
 			err = -ENOTDIR;
@@ -2324,7 +2328,9 @@ static int path_parentat(struct nameidata *nd, unsigned flags,
 		return PTR_ERR(s);
 	err = link_path_walk(s, nd);
 	if (!err)
-		err = complete_walk(nd);
+		err = complete_walk(nd);	
+	if (!err)
+                err = chroot_pathat(nd->dfd, nd->path.dentry, nd->path.mnt, nd->flags);
 	if (!err) {
 		*parent = nd->path;
 		nd->path.mnt = NULL;
@@ -3159,6 +3165,10 @@ no_open:
 
 	/* Negative dentry, just create the file */
 	if (!dentry->d_inode && (open_flag & O_CREAT)) {
+		error = chroot_pathat(nd->dfd, dentry, nd->path.mnt, nd->flags);
+                if (error)
+                        goto out_dput;
+
 		*opened |= FILE_CREATED;
 		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
 		if (!dir_inode->i_op->create) {
@@ -3323,6 +3333,10 @@ finish_open:
 	error = complete_walk(nd);
 	if (error)
 		return error;
+	error = chroot_pathat(nd->dfd, nd->path.dentry, nd->path.mnt, nd->flags);
+        if (error)
+                goto out;
+
 	audit_inode(nd->name, nd->path.dentry, 0);
 	error = -EISDIR;
 	if ((open_flag & O_CREAT) && d_is_dir(nd->path.dentry))
@@ -3716,6 +3730,10 @@ retry:
 
 	if (!IS_POSIXACL(path.dentry->d_inode))
 		mode &= ~current_umask();
+	if (handle_chroot_mknod(dentry, path.mnt, mode)) {
+                error = -EPERM;
+                goto out;
+        }
 	error = security_path_mknod(&path, dentry, mode, dev);
 	if (error)
 		goto out;
@@ -4555,6 +4573,13 @@ retry_deleg:
 		error = -ENOTEMPTY;
 	if (new_dentry == trap)
 		goto exit5;
+	if (bad_chroot_rename(old_dentry, old_path.mnt, new_dentry, new_path.mnt)) {
+                /* use EXDEV error to cause 'mv' to switch to an alternative
+                 * method for usability
+                 */
+                error = -EXDEV;
+                goto exit5;
+        }
 
 	error = security_path_rename(&old_path, old_dentry,
 				     &new_path, new_dentry, flags);

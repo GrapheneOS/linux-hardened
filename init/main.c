@@ -101,6 +101,8 @@ extern void init_IRQ(void);
 extern void fork_init(void);
 extern void radix_tree_init(void);
 
+extern void hardened_init(void);
+
 /*
  * Debug helper: via this flag we know that we are in 'early bootup code'
  * where only the boot processor is running with IRQ disabled.  This means
@@ -925,6 +927,10 @@ static int try_to_run_init_process(const char *init_filename)
 	return ret;
 }
 
+#ifdef CONFIG_HARDENED_CHROOT_INITRD
+extern int init_ran;
+#endif
+
 static noinline void __init kernel_init_freeable(void);
 
 #if defined(CONFIG_STRICT_KERNEL_RWX) || defined(CONFIG_STRICT_MODULE_RWX)
@@ -973,6 +979,11 @@ static int __ref kernel_init(void *unused)
 		pr_err("Failed to execute %s (error %d)\n",
 		       ramdisk_execute_command, ret);
 	}
+
+#ifdef CONFIG_HARDENED_CHROOT_INITRD
+	/* if no initrd was used, be extra sure we enforce chroot restrictions */
+	init_ran = 1;
+#endif 
 
 	/*
 	 * We try each of these until one succeeds.
@@ -1052,6 +1063,8 @@ static noinline void __init kernel_init_freeable(void)
 		ramdisk_execute_command = NULL;
 		prepare_namespace();
 	}
+
+	hardened_init();
 
 	/*
 	 * Ok, we have completed the initial bootup, and

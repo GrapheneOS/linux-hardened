@@ -72,6 +72,11 @@ static void shm_destroy(struct ipc_namespace *ns, struct shmid_kernel *shp);
 static int sysvipc_shm_proc_show(struct seq_file *s, void *it);
 #endif
 
+#ifdef CONFIG_HARDENED
+extern int chroot_shmat(const pid_t shm_cprid, const pid_t shm_lapid,
+		                           const u64 shm_createtime);
+#endif
+
 void shm_init_ns(struct ipc_namespace *ns)
 {
 	ns->shm_ctlmax = SHMMAX;
@@ -1176,7 +1181,12 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
 		err = -EIDRM;
 		goto out_unlock;
 	}
-
+#ifdef CONFIG_HARDENED
+        if ( !chroot_shmat(shp->shm_cprid, shp->shm_lapid, shp->shm_createtime)) {
+                err = -EACCES;
+                goto out_unlock;
+        }
+#endif
 	path = shp->shm_file->f_path;
 	path_get(&path);
 	shp->shm_nattch++;

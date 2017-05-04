@@ -12,7 +12,10 @@
 #include <linux/namei.h>
 #include <linux/mm.h>
 #include <linux/module.h>
+#include <linux/hardened.h>
 #include "internal.h"
+
+extern int handle_chroot_sysctl(const int op);
 
 static const struct dentry_operations proc_sys_dentry_operations;
 static const struct file_operations proc_sys_file_operations;
@@ -557,6 +560,7 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *buf,
 	struct inode *inode = file_inode(filp);
 	struct ctl_table_header *head = grab_header(inode);
 	struct ctl_table *table = PROC_I(inode)->sysctl_entry;
+	int op = write ? MAY_WRITE : MAY_READ;
 	ssize_t error;
 	size_t res;
 
@@ -575,6 +579,29 @@ static ssize_t proc_sys_call_handler(struct file *filp, void __user *buf,
 	error = -EINVAL;
 	if (!table->proc_handler)
 		goto out;
+
+#ifdef CONFIG_HARDENED
+        error = -EPERM;
+        if (handle_chroot_sysctl(op))
+                goto out;
+	/* NOTE: review code below to see if more of this would be useful for security other than acl
+        dget(filp->f_path.dentry);
+        if (gr_handle_sysctl_mod((const char *)filp->f_path.dentry->d_parent->d_name.name, table->procname, op)) {
+                dput(filp->f_path.dentry);
+                goto out;
+        }   
+        dput(filp->f_path.dentry);
+        if (!gr_acl_handle_open(filp->f_path.dentry, filp->f_path.mnt, op))
+                goto out;
+        if (write) {
+                if (current->nsproxy->net_ns != table->extra2) {
+                        if (!capable(CAP_SYS_ADMIN))
+                                goto out;
+                } else if (!ns_capable(current->nsproxy->net_ns->user_ns, CAP_NET_ADMIN))
+                        goto out;
+        }
+	*/
+#endif
 
 	/* careful: calling conventions are nasty here */
 	res = count;
