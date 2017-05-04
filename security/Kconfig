@@ -159,6 +159,13 @@ config HARDENED_USERCOPY_PAGESPAN
 	  been removed. This config is intended to be used only while
 	  trying to find such users.
 
+config PAGE_SANITIZE
+	bool "Sanitize pages"
+	default y
+	help
+	  Zero fill page allocations on free, reducing the lifetime of
+	  sensitive data and helping to mitigate use-after-free bugs.
+
 config STATIC_USERMODEHELPER
 	bool "Force all usermode helper calls through a single binary"
 	help
