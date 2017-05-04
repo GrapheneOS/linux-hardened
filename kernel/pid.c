@@ -39,6 +39,7 @@
 #include <linux/proc_ns.h>
 #include <linux/proc_fs.h>
 #include <linux/sched/task.h>
+#include <linux/hardened.h>
 
 #define pid_hashfn(nr, ns)	\
 	hash_long((unsigned long)nr + (unsigned long)ns, pidhash_shift)
@@ -450,14 +451,28 @@ EXPORT_SYMBOL(pid_task);
  */
 struct task_struct *find_task_by_pid_ns(pid_t nr, struct pid_namespace *ns)
 {
+	struct task_struct *task;
+
 	RCU_LOCKDEP_WARN(!rcu_read_lock_held(),
 			 "find_task_by_pid_ns() needs rcu_read_lock() protection");
-	return pid_task(find_pid_ns(nr, ns), PIDTYPE_PID);
+	task = pid_task(find_pid_ns(nr, ns), PIDTYPE_PID);
+
+        if (pid_is_chrooted(task))
+                return NULL;
+
+        return task;	
 }
 
 struct task_struct *find_task_by_vpid(pid_t vnr)
 {
 	return find_task_by_pid_ns(vnr, task_active_pid_ns(current));
+}
+
+struct task_struct *find_task_by_vpid_unrestricted(pid_t vnr)
+{
+        RCU_LOCKDEP_WARN(!rcu_read_lock_held(),
+                         "find_task_by_pid_ns() needs rcu_read_lock() protection");
+        return pid_task(find_pid_ns(vnr, task_active_pid_ns(current)), PIDTYPE_PID);
 }
 
 struct pid *get_task_pid(struct task_struct *task, enum pid_type type)

@@ -26,7 +26,7 @@
 #include <linux/bootmem.h>
 #include <linux/task_work.h>
 #include <linux/sched/task.h>
-
+#include <linux/hardened.h>
 #include "pnode.h"
 #include "internal.h"
 
@@ -2812,6 +2812,11 @@ long do_mount(const char *dev_name, const char __user *dir_name,
 	if (flags & MS_RDONLY)
 		mnt_flags |= MNT_READONLY;
 
+	if (handle_chroot_mount(path.dentry, path.mnt, dev_name)) {
+                retval = -EPERM;
+                goto dput_out;
+        }
+	
 	/* The default atime for remount is preservation */
 	if ((flags & MS_REMOUNT) &&
 	    ((flags & (MS_NOATIME | MS_NODIRATIME | MS_RELATIME |
@@ -3133,6 +3138,10 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
 	error = security_sb_pivotroot(&old, &new);
 	if (error)
 		goto out2;
+	if (handle_chroot_pivot()) {
+                error = -EPERM;
+                goto out2;
+        }	
 
 	get_fs_root(current->fs, &root);
 	old_mp = lock_mount(&old);
