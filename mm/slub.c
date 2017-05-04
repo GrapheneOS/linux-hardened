@@ -125,6 +125,11 @@ static inline int kmem_cache_debug(struct kmem_cache *s)
 #endif
 }
 
+static inline bool can_sanitize(struct kmem_cache *s)
+{
+	return !(s->flags & (SLAB_DESTROY_BY_RCU | SLAB_POISON));
+}
+
 void *fixup_red_left(struct kmem_cache *s, void *p)
 {
 	if (kmem_cache_debug(s) && s->flags & SLAB_RED_ZONE)
@@ -2738,6 +2743,11 @@ redo:
 		stat(s, ALLOC_FASTPATH);
 	}
 
+	if (IS_ENABLED(CONFIG_SLAB_SANITIZE_VERIFY) && can_sanitize(s) && !s->ctor && object) {
+		size_t offset = s->offset ? 0 : sizeof(void *);
+		BUG_ON(memchr_inv(object + offset, 0, s->object_size - offset));
+	}
+
 	if (unlikely(gfpflags & __GFP_ZERO) && object)
 		memset(object, 0, s->object_size);
 
@@ -2948,7 +2958,7 @@ static __always_inline void do_slab_free(struct kmem_cache *s,
 	struct kmem_cache_cpu *c;
 	unsigned long tid;
 
-	if (IS_ENABLED(CONFIG_SLAB_SANITIZE) && !(s->flags & (SLAB_DESTROY_BY_RCU | SLAB_POISON))) {
+	if (IS_ENABLED(CONFIG_SLAB_SANITIZE) && can_sanitize(s)) {
 		int offset = s->offset ? 0 : sizeof(void *);
 		void *x = head;
 
@@ -3175,6 +3185,15 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
 	}
 	c->tid = next_tid(c->tid);
 	local_irq_enable();
+
+	if (IS_ENABLED(CONFIG_SLAB_SANITIZE_VERIFY) && can_sanitize(s) && !s->ctor) {
+		int j;
+
+		for (j = 0; j < i; j++) {
+			size_t offset = s->offset ? 0 : sizeof(void *);
+			BUG_ON(memchr_inv(p[j] + offset, 0, s->object_size - offset));
+		}
+	}
 
 	/* Clear memory outside IRQ disabled fastpath loop */
 	if (unlikely(flags & __GFP_ZERO)) {
