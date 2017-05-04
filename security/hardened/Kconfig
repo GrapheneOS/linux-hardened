@@ -1,0 +1,30 @@
+#
+# Hardened patchset configuration
+#
+config HARDENED_BRUTE
+        bool "Deter exploit bruteforcing"
+        default y
+        select HARDENED_KERN_LOCKOUT
+	help
+	  This functionality has been extracted from the Grsecurity patchset.  All
+	  creidt for this functionality should be attributed to Open Source Security, inc.
+	  The extraction of this feature was from the open source test patch for kernel version 
+	  4.9.24.
+
+          If you say Y here, attempts to bruteforce exploits against forking
+          daemons such as apache or sshd, as well as against suid/sgid binaries
+          will be deterred.  When a child of a forking daemon is killed by PaX
+          or crashes due to an illegal instruction or other suspicious signal,
+          the parent process will be delayed 30 seconds upon every subsequent
+          fork until the administrator is able to assess the situation and
+          restart the daemon.
+          In the suid/sgid case, the attempt is logged, the user has all their
+          existing instances of the suid/sgid binary terminated and will
+          be unable to execute any suid/sgid binaries for 15 minutes.
+
+          It is recommended that you also enable signal logging in the auditing
+          section so that logs are generated when a process triggers a suspicious
+          signal.
+          If the sysctl option is enabled, a sysctl option with name
+          "deter_bruteforce" is created.
+

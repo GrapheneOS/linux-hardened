@@ -19,6 +19,8 @@
 #include <asm/io_apic.h>
 #include <asm/apic.h>
 
+extern void handle_kernel_exploit(void);
+
 int sysctl_panic_on_stackoverflow;
 
 /*
@@ -60,6 +62,8 @@ static inline void stack_overflow_check(struct pt_regs *regs)
 		current->comm, curbase, regs->sp,
 		irq_stack_top, irq_stack_bottom,
 		estack_top, estack_bottom);
+
+	handle_kernel_exploit();
 
 	if (sysctl_panic_on_stackoverflow)
 		panic("low stack detected by irq handler - check messages\n");
