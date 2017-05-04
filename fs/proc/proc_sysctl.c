@@ -15,7 +15,7 @@
 #include <linux/hardened.h>
 #include "internal.h"
 
-extern int gr_handle_chroot_sysctl(const int op);
+extern int handle_chroot_sysctl(const int op);
 
 static const struct dentry_operations proc_sys_dentry_operations;
 static const struct file_operations proc_sys_file_operations;
