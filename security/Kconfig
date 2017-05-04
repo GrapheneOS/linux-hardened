@@ -165,6 +165,15 @@ config SANITIZE_PAGE
 	  Zero fill page allocations on free, reducing the lifetime of
 	  sensitive data and helping to mitigate use-after-free bugs.
 
+config SANITIZE_PAGE_VERIFY
+	bool "Verify sanitized pages"
+	default y
+	depends on SANITIZE_PAGE
+	depends on !HIBERNATION
+	help
+	  Verify that newly allocated pages are zeroed to detect
+	  write-after-free bugs.
+
 config STATIC_USERMODEHELPER
 	bool "Force all usermode helper calls through a single binary"
 	help
