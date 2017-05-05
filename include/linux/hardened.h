@@ -5,6 +5,9 @@
 #include <linux/binfmts.h>
 #include <linux/tty.h>
 
+#define BRUTE_DAEMON_MSG "bruteforce prevention initiated for the next 30 minutes or until service restarted, stalling each fork 30 seconds.  Please investigate the crash report for "
+#define BRUTE_SUID_MSG "bruteforce prevention initiated due to crash of %.950s against uid %u, banning suid/sgid execs for %u minutes.  Please investigate the crash report for "
+
 int pid_is_chrooted(struct task_struct *p);
 int handle_chroot_fowner(struct pid *pid, enum pid_type type);
 int handle_chroot_nice(void);

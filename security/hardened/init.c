@@ -6,6 +6,7 @@
 #include <linux/percpu.h>
 #include <linux/module.h>
 
+int hardened_enable_brute;
 int hardened_enable_chroot_findtask;
 int hardened_enable_chroot_mount;
 int hardened_enable_chroot_shmat;
@@ -35,6 +36,9 @@ DEFINE_RWLOCK(hardened_exec_file_lock);
 void __init
 hardened_init(void)
 {
+#ifdef CONFIG_HARDENED_BRUTE
+        hardened_enable_brute = 1;
+#endif
 #ifdef CONFIG_HARDENED_CHROOT_FINDTASK
 	hardened_enable_chroot_findtask = 1;
 #endif

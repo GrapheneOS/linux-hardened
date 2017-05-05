@@ -77,6 +77,9 @@ int suid_dumpable = 0;
 static LIST_HEAD(formats);
 static DEFINE_RWLOCK(binfmt_lock);
 
+extern int process_kernel_exec_ban(void);
+extern int process_sugid_exec_ban(const struct linux_binprm *bprm);
+
 void __register_binfmt(struct linux_binfmt * fmt, int insert)
 {
 	BUG_ON(!fmt);
@@ -1749,6 +1752,11 @@ static int do_execveat_common(int fd, struct filename *filename,
 	retval = prepare_binprm(bprm);
 	if (retval < 0)
 		goto out;
+
+	if (process_kernel_exec_ban() || process_sugid_exec_ban(bprm)) {
+                retval = -EPERM;
+                goto out_fail;
+        }
 
 	retval = copy_strings_kernel(1, &bprm->filename, bprm);
 	if (retval < 0)

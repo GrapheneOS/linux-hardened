@@ -512,6 +512,9 @@ SYSCALL_DEFINE2(setreuid, uid_t, ruid, uid_t, euid)
 			goto error;
 	}
 
+	if (check_user_change(new->uid, new->euid, INVALID_UID))
+                goto error;
+
 	if (!uid_eq(new->uid, old->uid)) {
 		retval = set_user(new);
 		if (retval < 0)
@@ -562,6 +565,10 @@ SYSCALL_DEFINE1(setuid, uid_t, uid)
 	old = current_cred();
 
 	retval = -EPERM;
+	
+	if (check_user_change(kuid, kuid, kuid))
+                goto error;
+
 	if (ns_capable(old->user_ns, CAP_SETUID)) {
 		new->suid = new->uid = kuid;
 		if (!uid_eq(kuid, old->uid)) {
@@ -630,6 +637,9 @@ SYSCALL_DEFINE3(setresuid, uid_t, ruid, uid_t, euid, uid_t, suid)
 		    !uid_eq(ksuid, old->euid) && !uid_eq(ksuid, old->suid))
 			goto error;
 	}
+
+	if (check_user_change(kruid, keuid, INVALID_UID))
+                goto error;
 
 	if (ruid != (uid_t) -1) {
 		new->uid = kruid;
@@ -779,6 +789,8 @@ SYSCALL_DEFINE1(setfsuid, uid_t, uid)
 	    uid_eq(kuid, old->suid) || uid_eq(kuid, old->fsuid) ||
 	    ns_capable(old->user_ns, CAP_SETUID)) {
 		if (!uid_eq(kuid, old->fsuid)) {
+			if (check_user_change(INVALID_UID, INVALID_UID, kuid))
+                                goto error;
 			new->fsuid = kuid;
 			if (security_task_fix_setuid(new, old, LSM_SETID_FS) == 0)
 				goto change_okay;

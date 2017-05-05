@@ -2002,7 +2002,9 @@ long _do_fork(unsigned long clone_flags,
 
 		if (clone_flags & CLONE_PARENT_SETTID)
 			put_user(nr, parent_tidptr);
-
+		
+		handle_brute_check();	
+		
 		if (clone_flags & CLONE_VFORK) {
 			p->vfork_done = &vfork;
 			init_completion(&vfork);
