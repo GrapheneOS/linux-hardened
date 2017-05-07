@@ -29,9 +29,9 @@ unsigned long hardened_alert_wtime = 0;
 unsigned long hardened_alert_fyet = 0;
 
 DEFINE_SPINLOCK(hardened_audit_lock);
+*/
 
 DEFINE_RWLOCK(hardened_exec_file_lock);
-*/
 
 void __init
 hardened_init(void)
