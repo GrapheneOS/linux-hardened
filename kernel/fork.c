@@ -87,6 +87,7 @@
 #include <linux/compiler.h>
 #include <linux/sysctl.h>
 #include <linux/kcov.h>
+#include <linux/hardened.h>
 
 #include <asm/pgtable.h>
 #include <asm/pgalloc.h>
