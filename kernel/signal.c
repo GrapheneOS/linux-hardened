@@ -718,23 +718,6 @@ static int kill_ok_by_cred(struct task_struct *t)
 	return 0;
 }
 
-int
-handle_signal(const struct task_struct *p, const int sig)
-{
-#ifdef CONFIG_HARDENED
-	// NOTE: need to review gr_check_protected_task to see if it should be extracted
-        /* ignore the 0 signal for protected task checks */
-        /*if (task_pid_nr(current) > 1 && sig && gr_check_protected_task(p)) {
-                gr_log_sig_task(GR_DONT_AUDIT, GR_SIG_ACL_MSG, p, sig);
-                return -EPERM;
-        } else*/ if (pid_is_chrooted((struct task_struct *)p)) {
-                return -EPERM;
-        }
-#endif
-        return 0;
-}
-
-
 /*
  * Bad permissions for sending the signal
  * - the caller must hold the RCU read lock
