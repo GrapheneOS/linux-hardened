@@ -17,6 +17,7 @@ char *hardened_to_filename2(const struct dentry *dentry,
 char *hardened_to_filename3(const struct dentry *dentry,
 			    const struct vfsmount *mnt);
 
+extern int hardened_enable_brute;
 extern int hardened_enable_chroot_shmat;
 extern int hardened_enable_chroot_mount;
 extern int hardened_enable_chroot_double;
