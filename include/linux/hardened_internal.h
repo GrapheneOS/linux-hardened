@@ -33,6 +33,8 @@ extern int hardened_enable_chroot_rename;
 extern int hardened_enable_chroot_sysctl;
 extern int hardened_enable_chroot_unix;
 
+extern rwlock_t hardened_exec_file_lock;
+
 #define hardened_task_fullpath(tsk) ((tsk)->exec_file ? \
 			hardened_to_filename2((tsk)->exec_file->f_path.dentry, \
 			(tsk)->exec_file->f_path.mnt) : "/")
