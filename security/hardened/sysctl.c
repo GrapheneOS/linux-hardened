@@ -11,7 +11,7 @@ struct ctl_table hardened_table[] = {
                 .data           = &hardened_enable_brute,
                 .maxlen         = sizeof(int),
                 .mode           = 0600,
-                .proc_handler   = &proc_dointvec_secure,
+                .proc_handler   = &proc_dointvec_secureproc_dointvec,
         },
 #endif
 #ifdef CONFIG_HARDENED_CHROOT
@@ -21,7 +21,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_shmat,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_UNIX
@@ -30,7 +30,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_unix,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_MOUNT
@@ -39,7 +39,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_mount,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_FCHDIR
@@ -48,7 +48,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_fchdir,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_DOUBLE
@@ -57,7 +57,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_double,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_PIVOT
@@ -66,7 +66,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_pivot,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_CHDIR
@@ -75,7 +75,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_chdir,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_CHMOD
@@ -84,7 +84,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_chmod,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_MKNOD
@@ -93,7 +93,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_mknod,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_NICE
@@ -102,7 +102,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_nice,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_CAPS
@@ -111,7 +111,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_caps,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_RENAME
@@ -120,7 +120,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_rename,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_SYSCTL
@@ -129,7 +129,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_sysctl,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 #ifdef CONFIG_HARDENED_CHROOT_FINDTASK
@@ -138,7 +138,7 @@ struct ctl_table hardened_table[] = {
 		.data		= &hardened_enable_chroot_findtask,
 		.maxlen		= sizeof(int),
 		.mode		= 0600,
-		.proc_handler	= &proc_dointvec_secure,
+		.proc_handler	= &proc_dointvec_secureproc_dointvec,
 	},
 #endif
 	{ }
