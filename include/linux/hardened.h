@@ -12,6 +12,7 @@ void handle_brute_attach(int dumpable);
 void handle_brute_check(void);
 void handle_kernel_exploit(void);
 int handle_signal(const struct task_struct *p, const int sig);
+int check_user_change(kuid_t real, kuid_t effective, kuid_t fs);
 
 
 int pid_is_chrooted(struct task_struct *p);

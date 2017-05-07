@@ -1789,6 +1789,15 @@ static int do_execveat_common(int fd, struct filename *filename,
 		put_files_struct(displaced);
 	return retval;
 
+out_fail:
+#ifdef CONFIG_HARDENED
+	// NOTE: do not believe the below code is related to brute, but leaving it just incase
+        //current->acl = old_acl;
+        //memcpy(current->signal->rlim, old_rlim, sizeof(old_rlim));
+        //fput(current->exec_file);
+        //current->exec_file = old_exec_file;
+#endif
+
 out:
 	if (bprm->mm) {
 		acct_arg_size(bprm, 0);

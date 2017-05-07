@@ -797,6 +797,7 @@ SYSCALL_DEFINE1(setfsuid, uid_t, uid)
 		}
 	}
 
+error:
 	abort_creds(new);
 	return old_fsuid;
 
