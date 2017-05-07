@@ -31,6 +31,7 @@
 #include <linux/ima.h>
 #include <linux/dnotify.h>
 #include <linux/compat.h>
+
 #include "internal.h"
 
 int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
@@ -525,7 +526,6 @@ static int chmod_common(const struct path *path, umode_t mode)
 		return error;
 retry_deleg:
 	inode_lock(inode);
-		
 	error = security_path_chmod(path, mode);
 	if (error)
 		goto out_unlock;

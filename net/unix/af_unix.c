@@ -941,7 +941,7 @@ static struct sock *unix_find_other(struct net *net,
 		u = unix_find_socket_byname(net, sunname, len, type, hash);
 		if (u) {
 			struct dentry *dentry;
-			dentry = unix_sk(u)->path.dentry;	
+			dentry = unix_sk(u)->path.dentry;
 			if (dentry)
 				touch_atime(&unix_sk(u)->path);
 		} else

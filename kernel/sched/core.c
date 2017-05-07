@@ -3868,7 +3868,7 @@ SYSCALL_DEFINE1(nice, int, increment)
 
 	nice = clamp_val(nice, MIN_NICE, MAX_NICE);
 	if (increment < 0 && !can_nice(current, nice))
-                return -EPERM;	
+		return -EPERM;
 
 	retval = security_task_setnice(current, nice);
 	if (retval)

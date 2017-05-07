@@ -22,7 +22,7 @@ void set_fs_root(struct fs_struct *fs, const struct path *path)
 	fs->root = *path;
 	write_seqcount_end(&fs->seq);
 	spin_unlock(&fs->lock);
-	if (old_root.dentry) 
+	if (old_root.dentry)
 		path_put(&old_root);
 }
 

@@ -38,6 +38,7 @@
 #include <linux/bitops.h>
 #include <linux/init_task.h>
 #include <linux/uaccess.h>
+
 #include "internal.h"
 #include "mount.h"
 
@@ -2275,6 +2276,7 @@ static int path_lookupat(struct nameidata *nd, unsigned flags, struct path *path
 	}
 	if (!err)
 		err = complete_walk(nd);
+	
 	if (!err && nd->flags & LOOKUP_DIRECTORY)
 		if (!d_can_lookup(nd->path.dentry))
 			err = -ENOTDIR;
@@ -2322,7 +2324,7 @@ static int path_parentat(struct nameidata *nd, unsigned flags,
 		return PTR_ERR(s);
 	err = link_path_walk(s, nd);
 	if (!err)
-		err = complete_walk(nd);	
+		err = complete_walk(nd);
 	if (!err) {
 		*parent = nd->path;
 		nd->path.mnt = NULL;

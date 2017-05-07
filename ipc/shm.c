@@ -1176,6 +1176,7 @@ long do_shmat(int shmid, char __user *shmaddr, int shmflg,
 		err = -EIDRM;
 		goto out_unlock;
 	}
+
 	path = shp->shm_file->f_path;
 	path_get(&path);
 	shp->shm_nattch++;
