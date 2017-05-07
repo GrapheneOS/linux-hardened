@@ -754,11 +754,6 @@ static int check_kill_permission(int sig, struct siginfo *info,
 		}
 	}
 
-	if ((info == SEND_SIG_NOINFO || info->si_code != SI_TKILL ||
-             sig != (SIGRTMIN+1) || task_tgid_vnr(t) != info->si_pid)
-            && handle_signal(t, sig))
-                return -EPERM;
-
 	return security_task_kill(t, info, sig, 0);
 }
 

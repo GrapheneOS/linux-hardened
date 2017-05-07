@@ -104,10 +104,6 @@ struct dentry {
 		wait_queue_head_t *d_wait;	/* in-lookup ones only */
 	};
 
-#ifdef CONFIG_HARDENED_CHROOT_RENAME
-        atomic_t chroot_refcnt;         /* tracks use of directory in chroot */
-#endif
-
 	struct list_head d_child;	/* child of parent list */
 	struct list_head d_subdirs;	/* our children */
 	/*

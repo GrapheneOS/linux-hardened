@@ -5,7 +5,6 @@
 #include <linux/path.h>
 #include <linux/slab.h>
 #include <linux/fs_struct.h>
-#include <linux/hardened.h>
 #include "internal.h"
 
 /*
@@ -17,18 +16,14 @@ void set_fs_root(struct fs_struct *fs, const struct path *path)
 	struct path old_root;
 
 	path_get(path);
-	inc_chroot_refcnts(path->dentry, path->mnt);	
 	spin_lock(&fs->lock);
 	write_seqcount_begin(&fs->seq);
 	old_root = fs->root;
 	fs->root = *path;
-	set_chroot_entries(current, path);
 	write_seqcount_end(&fs->seq);
 	spin_unlock(&fs->lock);
-	if (old_root.dentry) {
-		dec_chroot_refcnts(old_root.dentry, old_root.mnt);
+	if (old_root.dentry) 
 		path_put(&old_root);
-	}
 }
 
 /*
@@ -91,7 +86,6 @@ void chroot_fs_refs(const struct path *old_root, const struct path *new_root)
 
 void free_fs_struct(struct fs_struct *fs)
 {
-	dec_chroot_refcnts(fs->root.dentry, fs->root.mnt);	
 	path_put(&fs->root);
 	path_put(&fs->pwd);
 	kmem_cache_free(fs_cachep, fs);
@@ -106,7 +100,6 @@ void exit_fs(struct task_struct *tsk)
 		task_lock(tsk);
 		spin_lock(&fs->lock);
 		tsk->fs = NULL;
-		clear_chroot_entries(tsk);
 		kill = !--fs->users;
 		spin_unlock(&fs->lock);
 		task_unlock(tsk);
@@ -132,7 +125,6 @@ struct fs_struct *copy_fs_struct(struct fs_struct *old)
 		fs->pwd = old->pwd;
 		path_get(&fs->pwd);
 		spin_unlock(&old->lock);
-		inc_chroot_refcnts(fs->root.dentry, fs->root.mnt);
 	}
 	return fs;
 }
@@ -150,7 +142,6 @@ int unshare_fs_struct(void)
 	spin_lock(&fs->lock);
 	kill = !--fs->users;
 	current->fs = new_fs;
-	set_chroot_entries(current, &new_fs->root);
 	spin_unlock(&fs->lock);
 	task_unlock(current);
 

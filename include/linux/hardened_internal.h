@@ -18,20 +18,6 @@ char *hardened_to_filename3(const struct dentry *dentry,
 			    const struct vfsmount *mnt);
 
 extern int hardened_enable_brute;
-extern int hardened_enable_chroot_shmat;
-extern int hardened_enable_chroot_mount;
-extern int hardened_enable_chroot_double;
-extern int hardened_enable_chroot_pivot;
-extern int hardened_enable_chroot_chdir;
-extern int hardened_enable_chroot_chmod;
-extern int hardened_enable_chroot_mknod;
-extern int hardened_enable_chroot_fchdir;
-extern int hardened_enable_chroot_nice;
-//extern int hardened_enable_chroot_execlog;
-extern int hardened_enable_chroot_caps;
-extern int hardened_enable_chroot_rename;
-extern int hardened_enable_chroot_sysctl;
-extern int hardened_enable_chroot_unix;
 
 extern rwlock_t hardened_exec_file_lock;
 
@@ -66,16 +52,6 @@ static inline bool is_same_file(const struct file *file1, const struct file *fil
 
 	return false;
 }
-
-#define HARDENED_CHROOT_CAPS {{ \
-	CAP_TO_MASK(CAP_LINUX_IMMUTABLE) | CAP_TO_MASK(CAP_NET_ADMIN) | \
-	CAP_TO_MASK(CAP_SYS_MODULE) | CAP_TO_MASK(CAP_SYS_RAWIO) | \
-	CAP_TO_MASK(CAP_SYS_PACCT) | CAP_TO_MASK(CAP_SYS_ADMIN) | \
-	CAP_TO_MASK(CAP_SYS_BOOT) | CAP_TO_MASK(CAP_SYS_TIME) | \
-	CAP_TO_MASK(CAP_NET_RAW) | CAP_TO_MASK(CAP_SYS_TTY_CONFIG) | \
-	CAP_TO_MASK(CAP_IPC_OWNER) | CAP_TO_MASK(CAP_SETFCAP), \
-	CAP_TO_MASK(CAP_SYSLOG) | CAP_TO_MASK(CAP_MAC_ADMIN) }}
-
 
 #endif
 
