@@ -133,7 +133,7 @@ static unsigned int pcpu_low_unit_cpu __read_mostly;
 static unsigned int pcpu_high_unit_cpu __read_mostly;
 
 /* the address of the first chunk which starts with the kernel static area */
-void *pcpu_base_addr __read_mostly;
+void *pcpu_base_addr __ro_after_init;
 EXPORT_SYMBOL_GPL(pcpu_base_addr);
 
 static const int *pcpu_unit_map __read_mostly;		/* cpu -> unit */
