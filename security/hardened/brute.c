@@ -1,6 +1,7 @@
 #include <linux/kernel.h>
 #include <linux/sched.h>
 #include <linux/sched/signal.h>
+#include <linux/sched/coredump.h>
 #include <linux/cred.h>
 #include <linux/fs.h>
 #include <linux/delay.h>
@@ -256,16 +257,17 @@ int process_sugid_exec_ban(const struct linux_binprm *bprm)
 
 int check_user_change(kuid_t real, kuid_t effective, kuid_t fs)
 {
-        unsigned int i;
-        __u16 num;
-        uid_t *uidlist;
-        uid_t curuid;
-        int realok = 0;
-        int effectiveok = 0;
-        int fsok = 0;
-        uid_t globalreal, globaleffective, globalfs;
+#if defined(CONFIG_HARDENED_KERN_LOCKOUT)    
+	// NOTE: commenting out unused variables associated with code in skipit: section below
+	//unsigned int i;
+        //__u16 num;
+        //uid_t *uidlist;
+        //uid_t curuid;
+        //int realok = 0;
+        //int effectiveok = 0;
+        //int fsok = 0;
+        uid_t globalreal;//, globaleffective, globalfs;
 
-#if defined(CONFIG_HARDENED_KERN_LOCKOUT)
         struct user_struct *user;
 
         if (!uid_valid(real))
