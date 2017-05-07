@@ -37,7 +37,7 @@ handle_signal(const struct task_struct *p, const int sig)
 {
 #ifdef CONFIG_HARDENED
 	/* ignore the 0 signal for protected task checks */
-	if (task_pid_nr(current) > 1 && sig && check_protected_task(p)) {
+	if (task_pid_nr(current) > 1 && sig) {
 		//gr_log_sig_task(GR_DONT_AUDIT, GR_SIG_ACL_MSG, p, sig);
 		return -EPERM;
 	} else if (pid_is_chrooted((struct task_struct *)p)) {
