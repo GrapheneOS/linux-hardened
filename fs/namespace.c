@@ -26,8 +26,8 @@
 #include <linux/bootmem.h>
 #include <linux/task_work.h>
 #include <linux/sched/task.h>
-#include "pnode.h"
 
+#include "pnode.h"
 #include "internal.h"
 
 /* Maximum number of mounts in a mount namespace */
