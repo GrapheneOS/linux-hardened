@@ -1044,6 +1044,11 @@ struct task_struct {
 #endif
 	struct dentry *chroot_dentry;
 	u8 is_chrooted;
+
+	struct file *exec_file;
+	unsigned long brute_expires;
+	u8 brute;
+
 	/* CPU-specific state of this task: */
 	struct thread_struct		thread;
 

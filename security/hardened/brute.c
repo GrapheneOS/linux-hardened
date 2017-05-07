@@ -1,6 +1,7 @@
 #include <linux/kernel.h>
 #include <linux/sched.h>
 #include <linux/sched/signal.h>
+#include <linux/cred.h>
 #include <linux/fs.h>
 #include <linux/delay.h>
 #include <linux/hardened.h>
