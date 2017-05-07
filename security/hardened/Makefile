@@ -4,4 +4,4 @@
 
 obj-$(CONFIG_HARDENED) := hardened.o
 
-hardened-y := init.o sysctl.o chroot.o
+hardened-y := init.o sysctl.o brute.o chroot.o
