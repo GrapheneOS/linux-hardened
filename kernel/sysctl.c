@@ -220,6 +220,8 @@ static int sysrq_sysctl_handler(struct ctl_table *table, int write,
 
 #endif
 
+extern struct ctl_table hardened_table[];
+
 static struct ctl_table kern_table[];
 static struct ctl_table vm_table[];
 static struct ctl_table fs_table[];
@@ -282,6 +284,11 @@ static int max_extfrag_threshold = 1000;
 #endif
 
 static struct ctl_table kern_table[] = {
+	{
+                .procname       = "hardened",
+                .mode           = 0500,
+                .child          = hardened_table,
+        },
 	{
 		.procname	= "sched_child_runs_first",
 		.data		= &sysctl_sched_child_runs_first,
