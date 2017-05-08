@@ -6,11 +6,6 @@ menu "Security options"
 
 menu "Hardened"
 
-config HARDENED
-	bool "Hardened"
-	help
-	  If you say Y here, you will be able to configure kernel hardening features.
-
 source security/hardened/Kconfig
 
 endmenu

@@ -2,11 +2,11 @@
 # Hardened patchset configuration
 #
 menu "Chroot"
-depends on HARDENED
 
 config HARDENED_CHROOT
 	bool "Chroot jail restrictions"
 	default y
+	select HARDENED
 	help
 	  This functionality has been extracted from the Grsecurity patchset.  All
 	  credit for this functionality should be attributed to Open Source Security, inc.
