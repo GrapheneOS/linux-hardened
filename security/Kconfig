@@ -183,6 +183,7 @@ config HARDENED_USERCOPY_PAGESPAN
 
 config FORTIFY_SOURCE
 	bool "Harden common functions against buffer overflows"
+	default y
 	help
 	  Detect overflows of buffers in common functions where the compiler
 	  can determine the buffer size.
