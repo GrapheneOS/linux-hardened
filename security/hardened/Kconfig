@@ -4,7 +4,8 @@
 config HARDENED_BRUTE
         bool "Deter exploit bruteforcing"
         default y
-        help
+        select HARDENED_KERN_LOCKOUT
+	help
 	  This functionality has been extracted from the Grsecurity patchset.  All
 	  creidt for this functionality should be attributed to Open Source Security, inc.
 	  The extraction of this feature was from the open source test patch for kernel version 
