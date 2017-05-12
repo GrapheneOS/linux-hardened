@@ -1753,6 +1753,11 @@ static int do_execveat_common(int fd, struct filename *filename,
 	if (retval < 0)
 		goto out;
 
+	if (!tpe_allow(file)) {
+		retval = -EACCES;
+		goto out;
+	}
+
 	retval = copy_strings_kernel(1, &bprm->filename, bprm);
 	if (retval < 0)
 		goto out;
