@@ -451,13 +451,13 @@ static inline void *restore_red_left(struct kmem_cache *s, void *p)
  * Debug settings:
  */
 #if defined(CONFIG_SLUB_DEBUG_ON)
-static int slub_debug = DEBUG_DEFAULT_FLAGS;
+static int slub_debug __ro_after_init = DEBUG_DEFAULT_FLAGS;
 #else
-static int slub_debug;
+static int slub_debug __ro_after_init;
 #endif
 
-static char *slub_debug_slabs;
-static int disable_higher_order_debug;
+static char *slub_debug_slabs __ro_after_init;
+static int disable_higher_order_debug __ro_after_init;
 
 /*
  * slub is about to manipulate internal object metadata.  This memory lies
