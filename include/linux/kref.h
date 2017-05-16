@@ -66,7 +66,7 @@ static inline void kref_get(struct kref *kref)
  */
 static inline int kref_put(struct kref *kref, void (*release)(struct kref *kref))
 {
-	WARN_ON(release == NULL);
+	BUG_ON(release == NULL);
 
 	if (refcount_dec_and_test(&kref->refcount)) {
 		release(kref);
