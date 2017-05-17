@@ -63,6 +63,7 @@
 #include <linux/compat.h>
 #include <linux/vmalloc.h>
 #include <linux/random.h>
+#include <linux/tpe.h>
 
 #include <linux/uaccess.h>
 #include <asm/mmu_context.h>
@@ -1752,6 +1753,11 @@ static int do_execveat_common(int fd, struct filename *filename,
 	retval = prepare_binprm(bprm);
 	if (retval < 0)
 		goto out;
+
+	if (!tpe_allow(file)) {
+		retval = -EACCES;
+		goto out;
+	}
 
 	retval = copy_strings_kernel(1, &bprm->filename, bprm);
 	if (retval < 0)

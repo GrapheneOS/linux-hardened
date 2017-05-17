@@ -68,6 +68,7 @@
 #include <linux/bpf.h>
 #include <linux/mount.h>
 #include <linux/tty.h>
+#include <linux/tpe.h>
 
 #include <linux/uaccess.h>
 #include <asm/processor.h>
@@ -1874,6 +1875,40 @@ static struct ctl_table fs_table[] = {
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= &one,
 	},
+#ifdef CONFIG_SECURITY_TPE
+	{
+		.procname	= "tpe",
+		.data		= &security_tpe,
+		.maxlen		= sizeof(int),
+		.mode		= 0600,
+		.proc_handler	= &proc_dointvec,
+	},
+	{
+		.procname	= "tpe_gid",
+		.data		= &security_tpe_gid,
+		.maxlen		= sizeof(int),
+		.mode		= 0600,
+		.proc_handler	= &proc_dointvec,
+	},
+#endif
+#ifdef CONFIG_SECURITY_TPE_INVERT
+	{
+		.procname	= "tpe_invert",
+		.data		= &security_tpe_invert,
+		.maxlen		= sizeof(int),
+		.mode		= 0600,
+		.proc_handler	= &proc_dointvec,
+	},
+#endif
+#ifdef CONFIG_SECURITY_TPE_ALL
+	{
+		.procname	= "tpe_restrict_all",
+		.data		= &security_enable_tpe_all,
+		.maxlen		= sizeof(int),
+		.mode		= 0600,
+		.proc_handler	= &proc_dointvec,
+	},
+#endif
 	{ }
 };
 
