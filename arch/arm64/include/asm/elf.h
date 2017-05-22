@@ -118,7 +118,7 @@
  * the loader.  We need to make sure that it is out of the way of the program
  * that it will "exec", and that there is sufficient room for the brk.
  */
-#define ELF_ET_DYN_BASE	(2 * TASK_SIZE_64 / 3)
+#define ELF_ET_DYN_BASE	(U32_MAX)
 
 #ifndef __ASSEMBLY__
 
@@ -173,7 +173,7 @@ extern int arch_setup_additional_pages(struct linux_binprm *bprm,
 
 #ifdef CONFIG_COMPAT
 
-#define COMPAT_ELF_ET_DYN_BASE		(2 * TASK_SIZE_32 / 3)
+#define COMPAT_ELF_ET_DYN_BASE		(0x10000000UL)
 
 /* AArch32 registers. */
 #define COMPAT_ELF_NGREG		18
