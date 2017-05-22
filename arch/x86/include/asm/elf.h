@@ -293,18 +293,19 @@ do {									\
 	}								\
 } while (0)
 
-#ifdef CONFIG_X86_32
+#ifdef CONFIG_COMPAT
+#define STACK_RND_MASK (test_thread_flag(TIF_ADDR32) ? (1UL << mmap_rnd_compat_bits) - 1 : (1UL << mmap_rnd_bits) - 1)
+#else
+#define STACK_RND_MASK ((1UL << mmap_rnd_bits) - 1)
+#endif
 
-#define STACK_RND_MASK (0x7ff)
+#ifdef CONFIG_X86_32
 
 #define ARCH_DLINFO		ARCH_DLINFO_IA32
 
 /* update AT_VECTOR_SIZE_ARCH if the number of NEW_AUX_ENT entries changes */
 
 #else /* CONFIG_X86_32 */
-
-/* 1GB for 64bit, 8MB for 32bit */
-#define STACK_RND_MASK (test_thread_flag(TIF_ADDR32) ? 0x7ff : 0x3fffff)
 
 #define ARCH_DLINFO							\
 do {									\
