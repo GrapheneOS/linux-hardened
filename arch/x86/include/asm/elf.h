@@ -250,7 +250,11 @@ extern int force_personality32;
    the loader.  We need to make sure that it is out of the way of the program
    that it will "exec", and that there is sufficient room for the brk.  */
 
-#define ELF_ET_DYN_BASE		(TASK_SIZE / 3 * 2)
+#ifdef CONFIG_X86_32
+#define ELF_ET_DYN_BASE		0x10000000UL
+#else
+#define ELF_ET_DYN_BASE		(test_thread_flag(TIF_ADDR32) ? 0x10000000UL : U32_MAX)
+#endif
 
 /* This yields a mask that user programs can use to figure out what
    instruction set this CPU supports.  This could be done in user space,
