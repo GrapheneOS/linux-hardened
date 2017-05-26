@@ -994,7 +994,7 @@ static int send_atomic_ack(struct rxe_qp *qp, struct rxe_pkt_info *pkt,
 	free_rd_atomic_resource(qp, res);
 	rxe_advance_resp_resource(qp);
 
-	memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(skb->cb));
+	__builtin_memcpy(SKB_TO_PKT(skb), &ack_pkt, sizeof(skb->cb));
 
 	res->type = RXE_ATOMIC_MASK;
 	res->atomic.skb = skb;
