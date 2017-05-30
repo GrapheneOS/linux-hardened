@@ -168,7 +168,7 @@ static int __init init_no_lps0(const struct dmi_system_id *d)
 	return 0;
 }
 
-static struct dmi_system_id acpisleep_dmi_table[] __initdata = {
+static const struct dmi_system_id acpisleep_dmi_table[] __initconst = {
 	{
 	.callback = init_old_suspend_ordering,
 	.ident = "Abit KN9 (nForce4 variant)",
