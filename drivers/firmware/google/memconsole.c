@@ -136,7 +136,7 @@ static bool __init found_memconsole(void)
 	return false;
 }
 
-static struct dmi_system_id memconsole_dmi_table[] __initdata = {
+static const struct dmi_system_id memconsole_dmi_table[] __initconst = {
 	{
 		.ident = "Google Board",
 		.matches = {
