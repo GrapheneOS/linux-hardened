@@ -300,7 +300,7 @@ static int cros_ec_lpc_remove(struct platform_device *pdev)
 	return 0;
 }
 
-static struct dmi_system_id cros_ec_lpc_dmi_table[] __initdata = {
+static const struct dmi_system_id cros_ec_lpc_dmi_table[] __initconst = {
 	{
 		/*
 		 * Today all Chromebooks/boxes ship with Google_* as version and
