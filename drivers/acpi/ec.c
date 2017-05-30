@@ -1753,7 +1753,7 @@ static int ec_correct_ecdt(const struct dmi_system_id *id)
 	return 0;
 }
 
-static struct dmi_system_id ec_dmi_table[] __initdata = {
+static const struct dmi_system_id ec_dmi_table[] __initconst = {
 	{
 	ec_correct_ecdt, "MSI MS-171F", {
 	DMI_MATCH(DMI_SYS_VENDOR, "Micro-Star"),
