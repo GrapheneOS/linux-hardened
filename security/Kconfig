@@ -175,6 +175,14 @@ config FORTIFY_SOURCE
 	  Detect overflows of buffers in common functions where the compiler
 	  can determine the buffer size.
 
+config FORTIFY_SOURCE_STRICT_STRING
+	bool "Harden common functions against buffer overflows"
+	depends on FORTIFY_SOURCE
+	depends on EXPERT
+	help
+	  Perform stricter overflow checks catching overflows within objects
+	  for common C string functions rather than only between objects.
+
 config PAGE_SANITIZE
 	bool "Sanitize pages"
 	default y
