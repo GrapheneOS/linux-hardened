@@ -433,6 +433,32 @@ int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data 
 	return 0;
 }
 
+/* returns:
+        1 for suid privilege
+        2 for sgid privilege
+        3 for fscap privilege
+*/
+int is_privileged_binary(const struct dentry *dentry)
+{
+        struct cpu_vfs_cap_data capdata;
+        struct inode *inode = dentry->d_inode;
+
+        if (!inode || S_ISDIR(inode->i_mode))
+                return 0;
+
+        if (inode->i_mode & S_ISUID)
+                return 1;
+        if ((inode->i_mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP))
+                return 2;
+
+        if (!get_vfs_caps_from_disk(dentry, &capdata)) {
+                if (!cap_isclear(capdata.inheritable) || !cap_isclear(capdata.permitted))
+                        return 3;
+        }
+
+        return 0;
+}
+
 /*
  * Attempt to get the on-exec apply capability sets for an executable file from
  * its xattrs and, if present, apply them to the proposed credentials being

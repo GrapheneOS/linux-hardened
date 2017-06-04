@@ -101,6 +101,8 @@ extern void init_IRQ(void);
 extern void fork_init(void);
 extern void radix_tree_init(void);
 
+extern void hardened_init(void);
+
 /*
  * Debug helper: via this flag we know that we are in 'early bootup code'
  * where only the boot processor is running with IRQ disabled.  This means
@@ -1052,6 +1054,8 @@ static noinline void __init kernel_init_freeable(void)
 		ramdisk_execute_command = NULL;
 		prepare_namespace();
 	}
+
+	hardened_init();
 
 	/*
 	 * Ok, we have completed the initial bootup, and

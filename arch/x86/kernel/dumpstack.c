@@ -211,6 +211,7 @@ EXPORT_SYMBOL_GPL(oops_begin);
 NOKPROBE_SYMBOL(oops_begin);
 
 void __noreturn rewind_stack_do_exit(int signr);
+extern void handle_kernel_exploit(void);
 
 void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
 {
@@ -233,6 +234,8 @@ void oops_end(unsigned long flags, struct pt_regs *regs, int signr)
 		panic("Fatal exception in interrupt");
 	if (panic_on_oops)
 		panic("Fatal exception");
+
+	handle_kernel_exploit();
 
 	/*
 	 * We're not going to return, but we might be on an IST stack or

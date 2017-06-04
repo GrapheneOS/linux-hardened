@@ -776,6 +776,8 @@ fail_unlock:
 fail_creds:
 	put_cred(cred);
 fail:
+	if (signr == SIGSEGV || signr == SIGBUS || signr == SIGKILL || signr == SIGILL)
+                handle_brute_attach(dumpable);
 	return;
 }
 

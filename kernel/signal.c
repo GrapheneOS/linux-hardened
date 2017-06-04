@@ -39,6 +39,7 @@
 #include <linux/compat.h>
 #include <linux/cn_proc.h>
 #include <linux/compiler.h>
+#include <linux/hardened.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/signal.h>
@@ -1136,7 +1137,7 @@ __group_send_sig_info(int sig, struct siginfo *info, struct task_struct *p)
 	return send_signal(sig, info, p, 1);
 }
 
-static int
+int
 specific_send_sig_info(int sig, struct siginfo *info, struct task_struct *t)
 {
 	return send_signal(sig, info, t, 0);

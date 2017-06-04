@@ -1042,6 +1042,10 @@ struct task_struct {
 	/* A live task holds one reference: */
 	atomic_t			stack_refcount;
 #endif
+	struct file *exec_file;
+	unsigned long brute_expires;
+	u8 brute;
+
 	/* CPU-specific state of this task: */
 	struct thread_struct		thread;
 
