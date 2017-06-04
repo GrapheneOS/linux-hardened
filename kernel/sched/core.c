@@ -25,6 +25,7 @@
 #include <linux/profile.h>
 #include <linux/security.h>
 #include <linux/syscalls.h>
+#include <linux/hardened.h>
 
 #include <asm/switch_to.h>
 #include <asm/tlb.h>
@@ -3867,8 +3868,8 @@ SYSCALL_DEFINE1(nice, int, increment)
 	nice = task_nice(current) + increment;
 
 	nice = clamp_val(nice, MIN_NICE, MAX_NICE);
-	if (increment < 0 && !can_nice(current, nice))
-		return -EPERM;
+	if (increment < 0 && (!can_nice(current, nice) || handle_chroot_nice()))
+                return -EPERM;	
 
 	retval = security_task_setnice(current, nice);
 	if (retval)

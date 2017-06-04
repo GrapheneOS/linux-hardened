@@ -31,7 +31,7 @@
 #include <linux/ima.h>
 #include <linux/dnotify.h>
 #include <linux/compat.h>
-
+#include <linux/hardened.h>
 #include "internal.h"
 
 int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
@@ -473,6 +473,8 @@ SYSCALL_DEFINE1(fchdir, unsigned int, fd)
 		goto out_putf;
 
 	error = inode_permission(inode, MAY_EXEC | MAY_CHDIR);
+	if (!error && !chroot_fchdir(f.file->f_path.dentry, f.file->f_path.mnt))
+		error = -EPERM;
 	if (!error)
 		set_fs_pwd(current->fs, &f.file->f_path);
 out_putf:
@@ -501,8 +503,11 @@ retry:
 	error = security_path_chroot(&path);
 	if (error)
 		goto dput_and_out;
+	if (handle_chroot_chroot(path.dentry, path.mnt))
+                goto dput_and_out;	
 
 	set_fs_root(current->fs, &path);
+	handle_chroot_chdir(&path);
 	error = 0;
 dput_and_out:
 	path_put(&path);
@@ -526,6 +531,12 @@ static int chmod_common(const struct path *path, umode_t mode)
 		return error;
 retry_deleg:
 	inode_lock(inode);
+	
+	if (handle_chroot_chmod(path->dentry, path->mnt, mode)) {
+		error = -EACCES;
+		goto out_unlock;
+	}
+	
 	error = security_path_chmod(path, mode);
 	if (error)
 		goto out_unlock;

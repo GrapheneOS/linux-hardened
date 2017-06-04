@@ -4,6 +4,12 @@
 
 menu "Security options"
 
+menu "Hardened"
+
+source security/hardened/Kconfig
+
+endmenu
+
 source security/keys/Kconfig
 
 config SECURITY_DMESG_RESTRICT

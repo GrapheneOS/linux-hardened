@@ -117,6 +117,12 @@ static inline bool gid_valid(kgid_t gid)
 	return __kgid_val(gid) != (gid_t) -1;
 }
 
+#define GLOBAL_UID(x) from_kuid_munged(&init_user_ns, (x))
+#define GLOBAL_GID(x) from_kgid_munged(&init_user_ns, (x))
+#define is_global_root(x) uid_eq((x), GLOBAL_ROOT_UID)
+#define is_global_nonroot(x) (!uid_eq((x), GLOBAL_ROOT_UID))
+#define is_global_nonroot_gid(x) (!gid_eq((x), GLOBAL_ROOT_GID))
+
 #ifdef CONFIG_USER_NS
 
 extern kuid_t make_kuid(struct user_namespace *from, uid_t uid);

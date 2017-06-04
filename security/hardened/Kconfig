@@ -1,0 +1,211 @@
+#
+# Hardened patchset configuration
+#
+menu "Chroot"
+
+config HARDENED_CHROOT
+	bool "Chroot jail restrictions"
+	default y
+	select HARDENED
+	help
+	  This functionality has been extracted from the Grsecurity patchset.  All
+	  credit for this functionality should be attributed to Open Source Security, inc.
+	  The extraction of this feature was from the open source test patch for kernel version
+	  4.9.24.
+
+	  If you say Y here, you will be able to choose several options that will
+	  make breaking out of a chrooted jail much more difficult.  If you
+	  encounter no software incompatibilities with the following options, it
+	  is recommended that you enable each one.
+
+	  Note that the chroot restrictions are not intended to apply to "chroots"
+	  to directories that are simple bind mounts of the global root filesystem.
+	  For several other reasons, a user shouldn't expect any significant
+	  security by performing such a chroot.
+
+config HARDENED_CHROOT_MOUNT
+	bool "Deny mounts"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to
+	  mount or remount filesystems.  If the sysctl option is enabled, a
+	  sysctl option with name "chroot_deny_mount" is created.
+
+config HARDENED_CHROOT_DOUBLE
+	bool "Deny double-chroots"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to chroot
+	  again outside the chroot.  This is a widely used method of breaking
+	  out of a chroot jail and should not be allowed.  If the sysctl 
+	  option is enabled, a sysctl option with name 
+	  "chroot_deny_chroot" is created.
+
+config HARDENED_CHROOT_PIVOT
+	bool "Deny pivot_root in chroot"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to use
+	  a function called pivot_root() that was introduced in Linux 2.3.41.  It
+	  works similar to chroot in that it changes the root filesystem.  This
+	  function could be misused in a chrooted process to attempt to break out
+	  of the chroot, and therefore should not be allowed.  If the sysctl
+	  option is enabled, a sysctl option with name "chroot_deny_pivot" is
+	  created.
+
+config HARDENED_CHROOT_CHDIR
+	bool "Enforce chdir(\"/\") on all chroots"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, the current working directory of all newly-chrooted
+	  applications will be set to the the root directory of the chroot.
+	  The man page on chroot(2) states:
+	  Note that this call does not change  the  current  working
+	  directory,  so  that `.' can be outside the tree rooted at
+	  `/'.  In particular, the  super-user  can  escape  from  a
+	  `chroot jail' by doing `mkdir foo; chroot foo; cd ..'.
+
+	  It is recommended that you say Y here, since it's not known to break
+	  any software.  If the sysctl option is enabled, a sysctl option with
+	  name "chroot_enforce_chdir" is created.
+
+config HARDENED_CHROOT_CHMOD
+	bool "Deny (f)chmod +s"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to chmod
+	  or fchmod files to make them have suid or sgid bits.  This protects
+	  against another published method of breaking a chroot.  If the sysctl
+	  option is enabled, a sysctl option with name "chroot_deny_chmod" is
+	  created.
+
+config HARDENED_CHROOT_FCHDIR
+	bool "Deny fchdir and fhandle out of chroot"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, a well-known method of breaking chroots by fchdir'ing
+	  to a file descriptor of the chrooting process that points to a directory
+	  outside the filesystem will be stopped.  This option also prevents use of
+	  the recently-created syscall for opening files by a guessable "file handle"
+	  inside a chroot, as well as accessing relative paths outside of a
+	  directory passed in via file descriptor with openat and similar syscalls.
+	  If the sysctl option is enabled, a sysctl option with name "chroot_deny_fchdir"
+	  is created.
+
+config HARDENED_CHROOT_MKNOD
+	bool "Deny mknod"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be allowed to
+	  mknod.  The problem with using mknod inside a chroot is that it
+	  would allow an attacker to create a device entry that is the same
+	  as one on the physical root of your system, which could range from
+	  anything from the console device to a device for your harddrive (which
+	  they could then use to wipe the drive or steal data).  It is recommended
+	  that you say Y here, unless you run into software incompatibilities.
+	  If the sysctl option is enabled, a sysctl option with name
+	  "chroot_deny_mknod" is created.
+
+config HARDENED_CHROOT_SHMAT
+	bool "Deny shmat() out of chroot"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to attach
+	  to shared memory segments that were created outside of the chroot jail.
+	  It is recommended that you say Y here.  If the sysctl option is enabled,
+	  a sysctl option with name "chroot_deny_shmat" is created.
+
+config HARDENED_CHROOT_UNIX
+	bool "Deny access to abstract AF_UNIX sockets out of chroot"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to
+	  connect to abstract (meaning not belonging to a filesystem) Unix
+	  domain sockets that were bound outside of a chroot.  It is recommended
+	  that you say Y here.  If the sysctl option is enabled, a sysctl option
+	  with name "chroot_deny_unix" is created.
+
+config HARDENED_CHROOT_FINDTASK
+	bool "Protect outside processes"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to
+	  kill, send signals with fcntl, ptrace, capget, getpgid, setpgid, 
+	  getsid, or view any process outside of the chroot.  If the sysctl
+	  option is enabled, a sysctl option with name "chroot_findtask" is
+	  created.
+
+config HARDENED_CHROOT_NICE
+	bool "Restrict priority changes"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, processes inside a chroot will not be able to raise
+	  the priority of processes in the chroot, or alter the priority of
+	  processes outside the chroot.  This provides more security than simply
+	  removing CAP_SYS_NICE from the process' capability set.  If the
+	  sysctl option is enabled, a sysctl option with name "chroot_restrict_nice"
+	  is created.
+
+config HARDENED_CHROOT_SYSCTL
+	bool "Deny sysctl writes"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, an attacker in a chroot will not be able to
+	  write to sysctl entries, either by sysctl(2) or through a /proc
+	  interface.  It is strongly recommended that you say Y here. If the
+	  sysctl option is enabled, a sysctl option with name
+	  "chroot_deny_sysctl" is created.
+
+config HARDENED_CHROOT_RENAME
+	bool "Deny bad renames"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, an attacker in a chroot will not be able to
+	  abuse the ability to create double chroots to break out of the
+	  chroot by exploiting a race condition between a rename of a directory
+	  within a chroot against an open of a symlink with relative path
+	  components.  This feature will likewise prevent an accomplice outside
+	  a chroot from enabling a user inside the chroot to break out and make
+	  use of their credentials on the global filesystem.  Enabling this
+	  feature is essential to prevent root users from breaking out of a
+	  chroot. If the sysctl option is enabled, a sysctl option with name
+	  "chroot_deny_bad_rename" is created.
+
+config HARDENED_CHROOT_CAPS
+	bool "Capability restrictions"
+	default y
+	depends on HARDENED_CHROOT
+	help
+	  If you say Y here, the capabilities on all processes within a
+	  chroot jail will be lowered to stop module insertion, raw i/o,
+	  system and net admin tasks, rebooting the system, modifying immutable
+	  files, modifying IPC owned by another, and changing the system time.
+	  This is left an option because it can break some apps.  Disable this
+	  if your chrooted apps are having problems performing those kinds of
+	  tasks.  If the sysctl option is enabled, a sysctl option with
+	  name "chroot_caps" is created.
+
+config HARDENED_CHROOT_INITRD
+	bool "Exempt initrd tasks from restrictions"
+	default y
+	depends on HARDENED_CHROOT && BLK_DEV_INITRD
+	help
+	  If you say Y here, tasks started prior to init will be exempted from
+	  grsecurity's chroot restrictions.  This option is mainly meant to
+	  resolve Plymouth's performing privileged operations unnecessarily
+	  in a chroot.
+
+endmenu

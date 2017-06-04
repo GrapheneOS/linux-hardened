@@ -118,6 +118,7 @@
 #include <linux/security.h>
 #include <linux/freezer.h>
 #include <linux/file.h>
+#include <linux/hardened.h>
 
 struct hlist_head unix_socket_table[2 * UNIX_HASH_SIZE];
 EXPORT_SYMBOL_GPL(unix_socket_table);
@@ -942,6 +943,12 @@ static struct sock *unix_find_other(struct net *net,
 		if (u) {
 			struct dentry *dentry;
 			dentry = unix_sk(u)->path.dentry;
+			
+			if (!handle_chroot_unix(pid_vnr(u->sk_peer_pid))) {
+                                err = -EPERM;
+                                sock_put(u);
+                                goto fail;
+                        }
 			if (dentry)
 				touch_atime(&unix_sk(u)->path);
 		} else

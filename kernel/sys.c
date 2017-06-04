@@ -68,6 +68,8 @@
 #include <asm/io.h>
 #include <asm/unistd.h>
 
+#include <linux/hardened.h>
+
 #ifndef SET_UNALIGN_CTL
 # define SET_UNALIGN_CTL(a, b)	(-EINVAL)
 #endif
@@ -167,6 +169,11 @@ static int set_one_prio(struct task_struct *p, int niceval, int error)
 		error = -EACCES;
 		goto out;
 	}
+	if (handle_chroot_setpriority(p, niceval)) {
+                error = -EACCES;
+                goto out;
+        }
+
 	no_nice = security_task_setnice(p, niceval);
 	if (no_nice) {
 		error = no_nice;

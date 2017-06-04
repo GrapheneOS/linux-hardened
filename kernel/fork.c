@@ -97,6 +97,8 @@
 
 #include <trace/events/sched.h>
 
+#include <linux/hardened.h>
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/task.h>
 #ifdef CONFIG_USER_NS
@@ -2354,6 +2356,7 @@ SYSCALL_DEFINE1(unshare, unsigned long, unshare_flags)
 			fs = current->fs;
 			spin_lock(&fs->lock);
 			current->fs = new_fs;
+			set_chroot_entries(current, &current->fs->root);
 			if (--fs->users)
 				new_fs = NULL;
 			else

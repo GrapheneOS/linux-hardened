@@ -23,7 +23,7 @@
 #include <linux/pid_namespace.h>
 #include <linux/user_namespace.h>
 #include <linux/shmem_fs.h>
-
+#include <linux/hardened.h>
 #include <asm/poll.h>
 #include <asm/siginfo.h>
 #include <linux/uaccess.h>
@@ -104,6 +104,8 @@ void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
 		int force)
 {
 	security_file_set_fowner(filp);
+	if (handle_chroot_fowner(pid, type))
+                return;	
 	f_modown(filp, pid, type, force);
 }
 EXPORT_SYMBOL(__f_setown);

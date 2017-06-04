@@ -18,6 +18,7 @@
 #include <linux/pid_namespace.h>
 #include <linux/user_namespace.h>
 #include <linux/uaccess.h>
+#include <linux/hardened.h>
 
 /*
  * Leveraged for setting/resetting capabilities
@@ -298,7 +299,8 @@ bool has_ns_capability(struct task_struct *t,
 	int ret;
 
 	rcu_read_lock();
-	ret = security_capable(__task_cred(t), ns, cap);
+	ret = security_capable(__task_cred(t), ns, cap) == 0 &&
+		                task_chroot_is_capable(t, __task_cred(t), cap);
 	rcu_read_unlock();
 
 	return (ret == 0);
@@ -339,7 +341,8 @@ bool has_ns_capability_noaudit(struct task_struct *t,
 	int ret;
 
 	rcu_read_lock();
-	ret = security_capable_noaudit(__task_cred(t), ns, cap);
+	ret = security_capable_noaudit(__task_cred(t), ns, cap) == 0 && 
+					task_chroot_is_capable(t, __task_cred(t), cap);
 	rcu_read_unlock();
 
 	return (ret == 0);
@@ -371,8 +374,8 @@ static bool ns_capable_common(struct user_namespace *ns, int cap, bool audit)
 		BUG();
 	}
 
-	capable = audit ? security_capable(current_cred(), ns, cap) :
-			  security_capable_noaudit(current_cred(), ns, cap);
+	capable = audit ? (security_capable(current_cred(), ns, cap) == 0 && chroot_is_capable(cap)) :
+			  (security_capable_noaudit(current_cred(), ns, cap) == 0 && chroot_is_capable(cap));
 	if (capable == 0) {
 		current->flags |= PF_SUPERPRIV;
 		return true;
