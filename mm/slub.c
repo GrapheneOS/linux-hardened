@@ -333,6 +333,9 @@ static inline void check_canary(struct kmem_cache *s, void *object, unsigned lon
 	unsigned long *canary = get_canary(s, object);
 	BUG_ON(*canary != get_canary_value(canary, value));
 }
+#else
+	#define set_canary(s, object, value)
+	#define check_canary(s, object, value)
 #endif
 
 /* Loop over all objects in a slab */
@@ -2805,12 +2808,10 @@ redo:
 	} else if (unlikely(gfpflags & __GFP_ZERO) && object)
 		memset(object, 0, s->object_size);
 
-#ifdef CONFIG_SLAB_CANARY
 	if (object) {
 		check_canary(s, object, s->random_inactive);
 		set_canary(s, object, s->random_active);
 	}
-#endif
 
 	slab_post_alloc_hook(s, gfpflags, 1, &object);
 
@@ -3025,10 +3026,8 @@ static __always_inline void do_slab_free(struct kmem_cache *s,
 		void *x = head;
 
 		while (1) {
-#ifdef CONFIG_SLAB_CANARY
 			check_canary(s, x, s->random_active);
 			set_canary(s, x, s->random_inactive);
-#endif
 
 			if (sanitize) {
 				memset(x + offset, 0, s->object_size - offset);
@@ -3274,12 +3273,10 @@ int kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
 			memset(p[j], 0, s->object_size);
 	}
 
-#ifdef CONFIG_SLAB_CANARY
 	for (k = 0; k < i; k++) {
 		check_canary(s, p[k], s->random_inactive);
 		set_canary(s, p[k], s->random_active);
 	}
-#endif
 
 	/* memcg and kmem_cache debug support */
 	slab_post_alloc_hook(s, flags, size, p);
@@ -3977,9 +3974,7 @@ const char *__check_heap_object(const void *ptr, unsigned long n,
 		offset -= s->red_left_pad;
 	}
 
-#ifdef CONFIG_SLAB_CANARY
 	check_canary(s, (void *)ptr - offset, s->random_active);
-#endif
 
 	/* Allow address range falling entirely within object size. */
 	if (offset <= object_size && n <= object_size - offset)
