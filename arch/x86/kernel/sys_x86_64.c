@@ -113,7 +113,7 @@ static void find_start_end(unsigned long flags, unsigned long *begin,
 	}
 
 	*begin	= get_mmap_base(1);
-	*end	= in_compat_syscall() ? tasksize_32bit() : tasksize_64bit();
+	*end	= get_mmap_base(0);
 }
 
 unsigned long
@@ -186,7 +186,7 @@ arch_get_unmapped_area_topdown(struct file *filp, const unsigned long addr0,
 
 	info.flags = VM_UNMAPPED_AREA_TOPDOWN;
 	info.length = len;
-	info.low_limit = PAGE_SIZE;
+	info.low_limit = get_mmap_base(1);
 	info.high_limit = get_mmap_base(0);
 	info.align_mask = 0;
 	info.align_offset = pgoff << PAGE_SHIFT;
