@@ -674,6 +674,10 @@ ifneq ($(CONFIG_FRAME_WARN),0)
 KBUILD_CFLAGS += $(call cc-option,-Wframe-larger-than=${CONFIG_FRAME_WARN})
 endif
 
+ifdef CONFIG_LOCAL_SANITIZE
+KBUILD_CFLAGS   += -fsanitize=local-sanitize
+endif
+
 # This selects the stack protector compiler flag. Testing it is delayed
 # until after .config has been reprocessed, in the prepare-compiler-check
 # target.
