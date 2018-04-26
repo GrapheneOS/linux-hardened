@@ -249,11 +249,11 @@ extern int force_personality32;
 
 /*
  * This is the base location for PIE (ET_DYN with INTERP) loads. On
- * 64-bit, this is above 4GB to leave the entire 32-bit address
+ * 64-bit, this is raised to 4GB to leave the entire 32-bit address
  * space open for things that want to use the area for 32-bit pointers.
  */
 #define ELF_ET_DYN_BASE		(mmap_is_ia32() ? 0x000400000UL : \
-						  (DEFAULT_MAP_WINDOW / 3 * 2))
+						  0x100000000UL)
 
 /* This yields a mask that user programs can use to figure out what
    instruction set this CPU supports.  This could be done in user space,
@@ -313,8 +313,8 @@ extern bool mmap_address_hint_valid(unsigned long addr, unsigned long len);
 
 #ifdef CONFIG_X86_32
 
-#define __STACK_RND_MASK(is32bit) (0x7ff)
-#define STACK_RND_MASK (0x7ff)
+#define __STACK_RND_MASK(is32bit) ((1UL << mmap_rnd_bits) - 1)
+#define STACK_RND_MASK ((1UL << mmap_rnd_bits) - 1)
 
 #define ARCH_DLINFO		ARCH_DLINFO_IA32
 
@@ -323,7 +323,11 @@ extern bool mmap_address_hint_valid(unsigned long addr, unsigned long len);
 #else /* CONFIG_X86_32 */
 
 /* 1GB for 64bit, 8MB for 32bit */
-#define __STACK_RND_MASK(is32bit) ((is32bit) ? 0x7ff : 0x3fffff)
+#ifdef CONFIG_COMPAT
+#define __STACK_RND_MASK(is32bit) ((is32bit) ? (1UL << mmap_rnd_compat_bits) - 1 : (1UL << mmap_rnd_bits) - 1)
+#else
+#define __STACK_RND_MASK(is32bit) ((1UL << mmap_rnd_bits) - 1)
+#endif
 #define STACK_RND_MASK __STACK_RND_MASK(mmap_is_ia32())
 
 #define ARCH_DLINFO							\
@@ -381,5 +385,4 @@ struct va_alignment {
 } ____cacheline_aligned;
 
 extern struct va_alignment va_align;
-extern unsigned long align_vdso_addr(unsigned long);
 #endif /* _ASM_X86_ELF_H */

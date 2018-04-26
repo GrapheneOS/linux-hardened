@@ -1040,6 +1040,12 @@ config CC_OPTIMIZE_FOR_SIZE
 
 endchoice
 
+config LOCAL_INIT
+	bool "Zero uninitialized locals"
+	help
+	  Zero-fill uninitialized local variables, other than variable-length
+	  arrays. Requires compiler support.
+
 config SYSCTL
 	bool
 
@@ -1601,6 +1607,49 @@ config SLAB_FREELIST_HARDENED
 	  other infrastructure. This options makes minor performance
 	  sacrifies to harden the kernel slab allocator against common
 	  freelist exploit methods.
+
+config SLAB_HARDENED
+	default y
+	depends on SLUB
+	bool "Hardened SLAB infrastructure"
+	help
+          Make minor performance sacrifices to harden the kernel slab
+          allocator.
+
+config SLAB_CANARY
+	depends on SLUB
+	depends on !SLAB_MERGE_DEFAULT
+	bool "SLAB canaries"
+	default y
+	help
+	  Place canaries at the end of kernel slab allocations, sacrificing
+	  some performance and memory usage for security.
+
+	  Canaries can detect some forms of heap corruption when allocations
+	  are freed and as part of the HARDENED_USERCOPY feature. It provides
+	  basic use-after-free detection for HARDENED_USERCOPY.
+
+	  Canaries absorb small overflows (rendering them harmless), mitigate
+	  non-NUL terminated C string overflows on 64-bit via a guaranteed zero
+	  byte and provide basic double-free detection.
+
+config SLAB_SANITIZE
+	bool "Sanitize SLAB allocations"
+	depends on SLUB
+	default y
+	help
+	  Zero fill slab allocations on free, reducing the lifetime of
+	  sensitive data and helping to mitigate use-after-free bugs.
+
+	  For slabs with debug poisoning enabling, this has no impact.
+
+config SLAB_SANITIZE_VERIFY
+	depends on SLAB_SANITIZE && PAGE_SANITIZE
+	default y
+	bool "Verify sanitized SLAB allocations"
+	help
+	  Verify that newly allocated slab allocations are zeroed to detect
+	  write-after-free bugs.
 
 config SLUB_CPU_PARTIAL
 	default y
