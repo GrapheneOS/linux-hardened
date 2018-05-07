@@ -539,7 +539,7 @@ void __weak bpf_jit_free(struct bpf_prog *fp)
 	bpf_prog_unlock_free(fp);
 }
 
-int bpf_jit_harden __read_mostly;
+int bpf_jit_harden __read_mostly = 2;
 
 static int bpf_jit_blind_insn(const struct bpf_insn *from,
 			      const struct bpf_insn *aux,
